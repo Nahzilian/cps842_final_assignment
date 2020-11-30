@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import Search from './Search'
 import FadeIn from 'react-fade-in';
 
+function redirectToLink(url){
+    window.location.href = url
+}
+
 function card(props) {
     return (
-        <div className="card-wrapper">
+        <div className="card-wrapper" onClick = {() => redirectToLink(props.url)}>
             <div className="card">
                 <h5 className="card-header">News</h5>
                 <div className="card-body">
                     <h5 className="card-title">{props.title}</h5>
-                    <p className="card-text">{props.abstract}</p>
+                    <p className="card-text">{props.preview}</p>
                 </div>
             </div>
             <br />
