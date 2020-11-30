@@ -13,15 +13,17 @@ const getQueryParams = (url) => {
         const queryParamRegex = /([^&=]+)=?([^&]*)/g
         const decode = (s) => decodeURIComponent(s.replace(plusSignRegex, ' '))
         const queryParamsString  = url.split('?')[1]
+
+        const queryParams = {}
         
         if (queryParamsString != '') {
             let param
             while (param = queryParamRegex.exec(queryParamsString)) {
                 queryParams[decode(param[1])] = decode(param[2])
             }
-
-            return queryParams
         }
+
+        return queryParams
     }
 }
 
