@@ -32,7 +32,15 @@ for await (const req of server) {
     console.log(JSON.stringify(queryParams))
     // const results = await handleSearch(queryParams.query)
 
+    const headers = new Headers()
+    headers.append("access-control-allow-origin", "*")
+    headers.append(
+        "access-control-allow-headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Range",
+    )
+
     req.respond({
+        headers,
         status: 200,
         body: "Hello world",
         // body: results,
