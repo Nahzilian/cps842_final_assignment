@@ -1,0 +1,1 @@
+deno run --unstable --allow-read --allow-write --allow-net src/server.js "$@"
