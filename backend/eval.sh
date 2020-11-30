@@ -1,0 +1,1 @@
+deno run --unstable --allow-read --allow-write src/eval/index.js "$@"
