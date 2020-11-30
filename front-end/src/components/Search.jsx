@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import data from './tempdata/temp.json'
+import axios from 'axios'
+
 export default function Search(props) {
+    const [query, setQuery] = useState(null);
     const [clear, setClear] = useState(true);
-    const apiLoadTemp = () => {
-        props.getData(data);
-        props.setCollected(true)
+    const apiLoadTemp = (q) => {
+        axios.get(`http://localhost:3001/?query=${q}`)
+        .then( response => {
+            console.log(response);
+            props.getData(data);
+            props.setCollected(true)
+        }).catch(error => {
+            console.error(error);
+        })
     }
     const submitHandler = (e) => {
         e.preventDefault();
-        setTimeout(apiLoadTemp, 3000)
+        var fixed_query = query.replace(" ","+")
+        console.log(fixed_query);
+        apiLoadTemp(fixed_query);
     }
     const handleOnChange = (e) => {
         if (clear === true) {
@@ -17,6 +28,7 @@ export default function Search(props) {
         if (e.target.value === null || e.target.value === "") {
             setClear(true)
         }
+        setQuery(e.target.value)
     }
     return (
         <div>
