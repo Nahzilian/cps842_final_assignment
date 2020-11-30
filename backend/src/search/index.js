@@ -139,3 +139,7 @@ const main = async () => {
 }
 
 await main()
+
+export const handleSearch = (query) => {
+    
+}
