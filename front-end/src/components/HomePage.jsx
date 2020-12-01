@@ -23,12 +23,13 @@ function card(props) {
 
 
 export default function HomePage() {
-    const [isSearched, setSearch] = useState(false)
-    const [data, getData] = useState(null)
+    const [isSearched, setSearch] = useState(localStorage.getItem("data")?true:false)
+    const [data, getData] = useState(localStorage.getItem("data")?JSON.parse(localStorage.getItem("data")):null)
     const pageLimit = 10;
-    const [isCollected, setCollected] = useState(false)
-    const [currentDisplay, setCurrentDisplay] = useState([]);
-    const [listLength, setListLength] = useState([1]);
+    const [isCollected, setCollected] = useState(localStorage.getItem("data")?true:false)
+    const [currentDisplay, setCurrentDisplay] = useState(localStorage.getItem("current_page_data")?JSON.parse(localStorage.getItem("current_page_data")):[]);
+    const [listLength, setListLength] = useState(localStorage.getItem("page_index")?JSON.parse(localStorage.getItem("page_index")):[1]);
+    console.log(listLength)
     const searched = (value) => {
         setCollected(false)
         setSearch(true)
@@ -51,6 +52,7 @@ export default function HomePage() {
             temp.push(i);
         }
         setListLength(temp)
+        localStorage.setItem("page_index",JSON.stringify(temp))
         pageControl(value, 1);
     }
 
@@ -59,6 +61,7 @@ export default function HomePage() {
         for (var i = 0; i < pageLimit; i++) {
             pageData.push(value.list[i + pageLimit * currentPage - pageLimit])
         }
+        localStorage.setItem("current_page_data",JSON.stringify(pageData))
         setCurrentDisplay(pageData)
     }
 

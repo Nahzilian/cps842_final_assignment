@@ -10,6 +10,7 @@ export default function Search(props) {
         .then( response => {
             console.log(response.data);
             props.getData(data);
+            localStorage.setItem("data",JSON.stringify(data))
             props.setCollected(true)
         }).catch(error => {
             console.error(error);
@@ -18,8 +19,8 @@ export default function Search(props) {
     const submitHandler = (e) => {
         e.preventDefault();
         var fixed_query = query.replace(" ","+")
-        console.log(fixed_query);
         apiLoadTemp(fixed_query);
+        localStorage.setItem("query",query)
     }
     const handleOnChange = (e) => {
         if (clear === true) {
