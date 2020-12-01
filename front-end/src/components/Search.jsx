@@ -3,7 +3,7 @@ import data from './tempdata/temp.json'
 import axios from 'axios'
 
 export default function Search(props) {
-    const [query, setQuery] = useState(null);
+    const [query, setQuery] = useState(localStorage.getItem("query")?localStorage.getItem("query"):null);
     const [clear, setClear] = useState(true);
     const apiLoadTemp = (q) => {
         axios.get(`http://localhost:3001/?query=${q}`)
@@ -35,7 +35,7 @@ export default function Search(props) {
         <div>
             <form className="row" onReset={() => setClear(true)} onSubmit={submitHandler} >
                 <div className="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-10">
-                    <input type="text" className="input-search" onChange={handleOnChange} />
+                    <input type="text" className="input-search" value = {query} onChange={handleOnChange} />
                 </div>
                 <div className="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-2">
                     <div className="row">

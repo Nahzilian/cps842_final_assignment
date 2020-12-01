@@ -6,6 +6,14 @@ function redirectToLink(url){
     window.location.href = url
 }
 
+window.onload = () => {
+    if (localStorage.getItem('data')) {
+      localStorage.clear();
+    }
+  };
+
+//window.addEventListener("beforeunload", () => localStorage.clear());
+
 function card(props) {
     return (
         <div className="card-wrapper" onClick = {() => redirectToLink(props.url)}>
@@ -20,7 +28,6 @@ function card(props) {
         </div>
     )
 }
-
 
 export default function HomePage() {
     const [isSearched, setSearch] = useState(localStorage.getItem("data")?true:false)
@@ -39,6 +46,7 @@ export default function HomePage() {
         for (var i = 1; i < pageCountEnd + 1; i++) {
             temp.push(i);
         }
+        localStorage.setItem("page_index",JSON.stringify(temp))
         setListLength(temp)
         pageControl(value, 1);
     }
