@@ -103,3 +103,14 @@ export const findAppearancesInText = (word, text) => {
     
     return indicies
 }
+
+export const getAllDocumentTerms = (document, stopWords, useStemmer) => {
+    // Combine everything into a single string
+    // and return it as a list
+    return stringToFilteredList(
+        `${document.title} ${document.body}`,
+        stopWords,
+        undefined,
+        useStemmer,
+    )
+}

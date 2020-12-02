@@ -1,1 +1,0 @@
-ls *.json | grep -v cache.json | xargs rm
