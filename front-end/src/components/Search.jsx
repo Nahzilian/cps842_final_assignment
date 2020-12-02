@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
-import data from './tempdata/temp.json'
+import axios from 'axios'
+
 export default function Search(props) {
+    const [query, setQuery] = useState(localStorage.getItem("query")?localStorage.getItem("query"):null);
     const [clear, setClear] = useState(true);
-    const apiLoadTemp = () => {
-        props.getData(data);
-        props.setCollected(true)
+    const apiLoadTemp = (q) => {
+        axios.get(`http://localhost:3001/?query=${q}`)
+        .then( response => {
+            props.getData(response.data);
+            props.setCollected(true)
+            console.log(response.data)
+        }).catch(error => {
+            console.error(error);
+        })
     }
     const submitHandler = (e) => {
         e.preventDefault();
-        setTimeout(apiLoadTemp, 3000)
+        var fixed_query = query.replace(" ","+")
+        apiLoadTemp(fixed_query);
+        localStorage.setItem("query",query)
     }
     const handleOnChange = (e) => {
         if (clear === true) {
@@ -17,12 +27,13 @@ export default function Search(props) {
         if (e.target.value === null || e.target.value === "") {
             setClear(true)
         }
+        setQuery(e.target.value)
     }
     return (
         <div>
             <form className="row" onReset={() => setClear(true)} onSubmit={submitHandler} >
                 <div className="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-10">
-                    <input type="text" className="input-search" onChange={handleOnChange} />
+                    <input type="text" className="input-search" value = {query} onChange={handleOnChange} />
                 </div>
                 <div className="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-2">
                     <div className="row">

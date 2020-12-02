@@ -2,21 +2,24 @@ import React, { useState } from 'react'
 import Search from './Search'
 import FadeIn from 'react-fade-in';
 
+function redirectToLink(url){
+    window.location.href = url
+}
+
 function card(props) {
     return (
-        <div className="card-wrapper">
+        <div className="card-wrapper" onClick = {() => redirectToLink(props.url)}>
             <div className="card">
                 <h5 className="card-header">News</h5>
                 <div className="card-body">
-                    <h5 className="card-title">{props.title}</h5>
-                    <p className="card-text">{props.abstract}</p>
+                    <h5 className="card-title">{props.title?props.title:null}</h5>
+                    <p className="card-text">{props.preview?props.preview.slice(0,400)+" ...":null}</p>
                 </div>
             </div>
             <br />
         </div>
     )
 }
-
 
 export default function HomePage() {
     const [isSearched, setSearch] = useState(false)
@@ -30,7 +33,7 @@ export default function HomePage() {
         setSearch(true)
         getData(value)
         var temp = []
-        var pageCountEnd = Math.ceil(value.list.length / pageLimit)
+        var pageCountEnd = Math.ceil(value.length / pageLimit)
         for (var i = 1; i < pageCountEnd + 1; i++) {
             temp.push(i);
         }
@@ -42,18 +45,22 @@ export default function HomePage() {
         setCollected(false)
         getData(value)
         var temp = []
-        var pageCountEnd = Math.ceil(value.list.length / pageLimit)
+        var pageCountEnd = Math.ceil(value.length / pageLimit)
         for (var i = 1; i < pageCountEnd + 1; i++) {
             temp.push(i);
         }
         setListLength(temp)
         pageControl(value, 1);
     }
-
+    console.log(currentDisplay)
     const pageControl = (value, currentPage) => {
         var pageData = []
         for (var i = 0; i < pageLimit; i++) {
-            pageData.push(value.list[i + pageLimit * currentPage - pageLimit])
+            var temp = value[i + pageLimit * currentPage - pageLimit]
+            if (temp){
+                pageData.push(temp)
+            }
+            
         }
         setCurrentDisplay(pageData)
     }
@@ -95,6 +102,8 @@ export default function HomePage() {
                 </nav>
 
                 <div className="result-list">
+                <h4>Found {data.length} matching results</h4>
+                <br/>
                     <FadeIn>
                         {currentDisplay !== null ? currentDisplay.map(x => card(x)) : null}
                     </FadeIn>
