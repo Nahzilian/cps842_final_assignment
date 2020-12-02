@@ -4,7 +4,7 @@
     PAGERANK ALGORITHM IMPLEMENTATION BY STEPHEN MACNEIL
     https://github.com/stevemacn/PageRank
     https://raw.githubusercontent.com/stevemacn/PageRank/master/lib/pagerank.js
-    SLIGHTLY MODIFIED FOR DENO PURPOSES
+    MODIFIED FOR ES6, PROMISES (REPLACING CALLBACKS), AND FUNCTIONAL PROGRAMMING
 
     NONE OF THIS CODE BELONGS TO US
 */
@@ -20,84 +20,86 @@
 // ----------
 
 //Expose our library to be called externally
-export default function (nodeMatrix, linkProb, tolerance, callback, debug) {
-    if (!nodeMatrix || !linkProb || !tolerance || !callback) {
-        throw new Error("Provide 4 arguments: "+
-            "nodeMatrix, link probability, tolerance, callback");
+export default async function (nodeMatrix, linkProb, tolerance, debug) {
+    if (!nodeMatrix || !linkProb || !tolerance) {
+        throw new Error("Provide 3 arguments: "+
+            "nodeMatrix, link probability, tolerance");
     }
     //If debug is unset set it to false
     if (!debug) { 
         debug=false;
     }
-    return new Pagerank(nodeMatrix, linkProb, tolerance, callback, debug);
+    // return Promise.resolve(true)
+    return await Pagerank(nodeMatrix, linkProb, tolerance, debug);
 };
 
 // Initialize
 // ----------
-function Pagerank(nodeMatrix, linkProb, tolerance, callback, debug) {
+async function Pagerank(nodeMatrix, linkProb, tolerance, debug) {
+    const rankInfo = {}
+
     //**OutgoingNodes:** represents an array of nodes. Each node in this 
     //array contains an array of nodes to which the corresponding node has
     //outgoing links.
-    this.outgoingNodes = nodeMatrix;
+    rankInfo.outgoingNodes = nodeMatrix;
     //**LinkProb:** a value ??
-    this.linkProb = linkProb;
+    rankInfo.linkProb = linkProb;
     //**Tolerance:** the point at which a solution is deemed optimal. 
     //Higher values are more accurate, lower values are faster to computer. 
-    this.tolerance = tolerance;
-    this.callback = callback;
+    rankInfo.tolerance = tolerance;
 
     //Number of outgoing nodes
-    this.pageCount = Object.keys(this.outgoingNodes).length;
+    rankInfo.pageCount = Object.keys(rankInfo.outgoingNodes).length;
     //**Coeff:** coefficient for the likelihood that a page will be visited.
-    this.coeff = (1-linkProb)/this.pageCount;
+    rankInfo.coeff = (1-linkProb)/rankInfo.pageCount;
     
-    this.probabilityNodes = !(nodeMatrix instanceof Array) ? {} : [];
-    this.incomingNodes = !(nodeMatrix instanceof Array) ? {} : [];
-    this.debug=debug;
+    rankInfo.probabilityNodes = !(nodeMatrix instanceof Array) ? {} : [];
+    rankInfo.incomingNodes = !(nodeMatrix instanceof Array) ? {} : [];
+    rankInfo.debug=debug;
     
-    this.startRanking();
+    return await startRanking(rankInfo);
 }
 
 //Start ranking 
 // ----------
-Pagerank.prototype.startRanking = function () {
+const startRanking = async (rankInfo) => {
 
     //we initialize all of our probabilities
-    var initialProbability = 1/this.pageCount, 
-        outgoingNodes = this.outgoingNodes, i, a, index;
+    var initialProbability = 1/rankInfo.pageCount, 
+        outgoingNodes = rankInfo.outgoingNodes, i, a, index;
     
     //rearray the graph and generate initial probability
     for (i in outgoingNodes) {
-        this.probabilityNodes[i]=initialProbability;
+        rankInfo.probabilityNodes[i]=initialProbability;
         for (a in outgoingNodes[i]) {
             index = outgoingNodes[i][a];
-            if (!this.incomingNodes[index]) {
-                this.incomingNodes[index]=[]; 
+            if (!rankInfo.incomingNodes[index]) {
+                rankInfo.incomingNodes[index]=[]; 
             }
-            this.incomingNodes[index].push(i);
+            rankInfo.incomingNodes[index].push(i);
         }
     }
 
     //if debug is set, print each iteration
-    if (this.debug) this.reportDebug(1)
+    if (rankInfo.debug) reportDebug(1)
     
-    this.iterate(1);
+    return await iterate(1, rankInfo);
 };
 
 //Log iteration to console 
 // ----------
-Pagerank.prototype.reportDebug = function (count) {
+const reportDebug = (count, rankInfo) => {
     console.log("____ITERATION "+count+"____");
-    console.log("Pages: " + Object.keys(this.outgoingNodes).length);
-    console.log("outgoing %j", this.outgoingNodes);
-    console.log("incoming %j",this.incomingNodes);
-    console.log("probability %j",this.probabilityNodes);
+    console.log("Pages: " + Object.keys(rankInfo.outgoingNodes).length);
+    console.log("outgoing %j", rankInfo.outgoingNodes);
+    console.log("incoming %j",rankInfo.incomingNodes);
+    console.log("probability %j",rankInfo.probabilityNodes);
 };
 
 
 //Calculate new weights 
 // ----------
-Pagerank.prototype.iterate = function(count) {
+const iterate = async (count, rankInfo) => {
     var result = [];
     var resultHash={};
     var prob, ct, b, a, sum, res, max, min;
@@ -107,20 +109,20 @@ Pagerank.prototype.iterate = function(count) {
     //This weight is divided by the total number of 
     //outgoing edges from each weighted node and summed to 
     //determine the new weight of the original node.
-    for (b in this.probabilityNodes) {
+    for (b in rankInfo.probabilityNodes) {
         sum = 0;
-        if( this.incomingNodes[b] ) {
-            for ( a=0; a<this.incomingNodes[b].length; a++) {
-                prob = this.probabilityNodes[ this.incomingNodes[b][a] ];
-                ct = this.outgoingNodes[ this.incomingNodes[b][a] ].length;
+        if( rankInfo.incomingNodes[b] ) {
+            for ( a=0; a<rankInfo.incomingNodes[b].length; a++) {
+                prob = rankInfo.probabilityNodes[ rankInfo.incomingNodes[b][a] ];
+                ct = rankInfo.outgoingNodes[ rankInfo.incomingNodes[b][a] ].length;
                 sum += (prob/ct) ;
             }
         }
 
         //determine if the new probability is within tolerance.
-        res = this.coeff+this.linkProb*sum;
-        max = this.probabilityNodes[b]+this.tolerance;
-        min = this.probabilityNodes[b]-this.tolerance;   
+        res = rankInfo.coeff+rankInfo.linkProb*sum;
+        max = rankInfo.probabilityNodes[b]+rankInfo.tolerance;
+        min = rankInfo.probabilityNodes[b]-rankInfo.tolerance;   
 
         //if the result has changed push that result
         if (min <= res && res<= max) {
@@ -129,22 +131,22 @@ Pagerank.prototype.iterate = function(count) {
         }
     
         //update the probability for node *b*
-        this.probabilityNodes[b]=res;
+        rankInfo.probabilityNodes[b]=res;
     }
 
     //When we have all results (no weights are changing) we return via callback
-    if (result.length == this.pageCount) {
-        if( !(this.outgoingNodes instanceof Array)) {
-            return this.callback(null, resultHash);
+    if (result.length == rankInfo.pageCount) {
+        if( !(rankInfo.outgoingNodes instanceof Array)) {
+            return Promise.resolve(resultHash)
         }
-        return this.callback(null, result);
+        return Promise.resolve(result)
     }
     
     //if debug is set, print each iteration
-    if (this.debug) {
-        this.reportDebug(count); 
+    if (rankInfo.debug) {
+        reportDebug(count); 
     }
     
     ++count;
-    return this.iterate(count);
+    return await iterate(count, rankInfo);
 };

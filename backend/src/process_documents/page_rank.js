@@ -39,7 +39,7 @@ const websiteToLinkMatrix = (urlIds) => (website) => {
 // -----------------
 // THE MAIN FUNCTION
 // -----------------
-export const calculatePageRanks = (websites) => {
+export const calculatePageRanks = async (websites) => {
     const urlIds = collectUrls(websites)
 
     const pageRankMap = websites.map(
@@ -49,13 +49,7 @@ export const calculatePageRanks = (websites) => {
     const linkProb = 0.85
     const tolerance = 0.002 // Faster to compute, might be less accurate
 
-    const pageRanks = Pagerank(pageRankMap, linkProb, tolerance, (err, res) => {
-        if (err) {
-            throw new Error(`PageRank failed: ${JSON.stringify(err)}`)
-        }
-  
-        return res
-    })
+    const pageRanks = await Pagerank(pageRankMap, linkProb, tolerance)
 
     return { urlIds, pageRanks }
 }
