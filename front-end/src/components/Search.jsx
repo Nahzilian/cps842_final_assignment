@@ -7,9 +7,9 @@ export default function Search(props) {
     const apiLoadTemp = (q) => {
         axios.get(`http://localhost:3001/?query=${q}`)
         .then( response => {
-            console.log(response.data);
             props.getData(response.data);
             props.setCollected(true)
+            console.log(response.data)
         }).catch(error => {
             console.error(error);
         })

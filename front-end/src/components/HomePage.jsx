@@ -12,8 +12,8 @@ function card(props) {
             <div className="card">
                 <h5 className="card-header">News</h5>
                 <div className="card-body">
-                    <h5 className="card-title">{props.title}</h5>
-                    <p className="card-text">{props.preview}</p>
+                    <h5 className="card-title">{props.title?props.title:null}</h5>
+                    <p className="card-text">{props.preview?props.preview.slice(0,400)+" ...":null}</p>
                 </div>
             </div>
             <br />
@@ -52,11 +52,15 @@ export default function HomePage() {
         setListLength(temp)
         pageControl(value, 1);
     }
-
+    console.log(currentDisplay)
     const pageControl = (value, currentPage) => {
         var pageData = []
         for (var i = 0; i < pageLimit; i++) {
-            pageData.push(value[i + pageLimit * currentPage - pageLimit])
+            var temp = value[i + pageLimit * currentPage - pageLimit]
+            if (temp){
+                pageData.push(temp)
+            }
+            
         }
         setCurrentDisplay(pageData)
     }
@@ -98,6 +102,8 @@ export default function HomePage() {
                 </nav>
 
                 <div className="result-list">
+                <h4>Found {data.length} matching results</h4>
+                <br/>
                     <FadeIn>
                         {currentDisplay !== null ? currentDisplay.map(x => card(x)) : null}
                     </FadeIn>
