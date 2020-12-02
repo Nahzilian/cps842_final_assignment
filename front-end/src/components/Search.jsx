@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import data from './tempdata/temp.json'
 import axios from 'axios'
 
 export default function Search(props) {
@@ -9,8 +8,7 @@ export default function Search(props) {
         axios.get(`http://localhost:3001/?query=${q}`)
         .then( response => {
             console.log(response.data);
-            props.getData(data);
-            localStorage.setItem("data",JSON.stringify(data))
+            props.getData(response.data);
             props.setCollected(true)
         }).catch(error => {
             console.error(error);

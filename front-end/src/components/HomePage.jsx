@@ -6,14 +6,6 @@ function redirectToLink(url){
     window.location.href = url
 }
 
-window.onload = () => {
-    if (localStorage.getItem('data')) {
-      localStorage.clear();
-    }
-  };
-
-//window.addEventListener("beforeunload", () => localStorage.clear());
-
 function card(props) {
     return (
         <div className="card-wrapper" onClick = {() => redirectToLink(props.url)}>
@@ -30,23 +22,21 @@ function card(props) {
 }
 
 export default function HomePage() {
-    const [isSearched, setSearch] = useState(localStorage.getItem("data")?true:false)
-    const [data, getData] = useState(localStorage.getItem("data")?JSON.parse(localStorage.getItem("data")):null)
+    const [isSearched, setSearch] = useState(false)
+    const [data, getData] = useState(null)
     const pageLimit = 10;
-    const [isCollected, setCollected] = useState(localStorage.getItem("data")?true:false)
-    const [currentDisplay, setCurrentDisplay] = useState(localStorage.getItem("current_page_data")?JSON.parse(localStorage.getItem("current_page_data")):[]);
-    const [listLength, setListLength] = useState(localStorage.getItem("page_index")?JSON.parse(localStorage.getItem("page_index")):[1]);
-    console.log(listLength)
+    const [isCollected, setCollected] = useState(false)
+    const [currentDisplay, setCurrentDisplay] = useState([]);
+    const [listLength, setListLength] = useState([1]);
     const searched = (value) => {
         setCollected(false)
         setSearch(true)
         getData(value)
         var temp = []
-        var pageCountEnd = Math.ceil(value.list.length / pageLimit)
+        var pageCountEnd = Math.ceil(value.length / pageLimit)
         for (var i = 1; i < pageCountEnd + 1; i++) {
             temp.push(i);
         }
-        localStorage.setItem("page_index",JSON.stringify(temp))
         setListLength(temp)
         pageControl(value, 1);
     }
@@ -55,21 +45,19 @@ export default function HomePage() {
         setCollected(false)
         getData(value)
         var temp = []
-        var pageCountEnd = Math.ceil(value.list.length / pageLimit)
+        var pageCountEnd = Math.ceil(value.length / pageLimit)
         for (var i = 1; i < pageCountEnd + 1; i++) {
             temp.push(i);
         }
         setListLength(temp)
-        localStorage.setItem("page_index",JSON.stringify(temp))
         pageControl(value, 1);
     }
 
     const pageControl = (value, currentPage) => {
         var pageData = []
         for (var i = 0; i < pageLimit; i++) {
-            pageData.push(value.list[i + pageLimit * currentPage - pageLimit])
+            pageData.push(value[i + pageLimit * currentPage - pageLimit])
         }
-        localStorage.setItem("current_page_data",JSON.stringify(pageData))
         setCurrentDisplay(pageData)
     }
 
