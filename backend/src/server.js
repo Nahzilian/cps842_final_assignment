@@ -4,7 +4,7 @@ import { getInvertedIndex } from './process_documents/index.js'
 import { getStopWords } from "./stopwords.js"
 import { getBestMatches, queryWeight } from "./search/index.js"
 
-const LINKS_DOCUMENT_FILENAME = './src/format_examples/theeyeopener.json'
+const LINKS_DOCUMENT_FILENAME = '../crawler/service_workers/result.json'
 
 const getQueryParams = (url) => {
     if (url != '') {
