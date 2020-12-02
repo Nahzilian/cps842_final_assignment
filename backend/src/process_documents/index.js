@@ -16,9 +16,10 @@ import {
  * @param {Array<string>} stopWords The stop words to remove (can be an empty array)
  * @param {boolean} useStemmer Whether or not to use the stemmer
  */
-export const getInvertedIndex = (docCollection, stopWords, useStemmer) => {
+export const getInvertedIndex = async (docCollection, stopWords, useStemmer) => {
     console.log('Calculating PageRank scores...')
-    const { urlIds, pageRanks } = calculatePageRanks(docCollection)
+    const { urlIds, pageRanks } = await calculatePageRanks(docCollection)
+    // console.log(pageRanks)
     console.log('Successfully calculated PageRank scores.')
 
     console.log('Creating inverted index and dictionary...')
@@ -73,7 +74,7 @@ export const getInvertedIndex = (docCollection, stopWords, useStemmer) => {
                 ),
             }), {}),
             // Grab the PageRank score using the row number of the URL
-            pageRankScore: pageRanks[urlIds[doc.org_url]],
+            pageRankScore: pageRanks[docId],
         }
     })
 

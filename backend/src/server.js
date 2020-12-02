@@ -44,8 +44,10 @@ const onBoot = async (
         .filter(l => !!l)
     const stopWords = await getStopWords(stopWordsFilename, useStopWords)
 
+    const invertedIndexFiles = await getInvertedIndex(linksFile, stopWords, useStemmer)
+
     return {
-        ...getInvertedIndex(linksFile, stopWords, useStemmer),
+        ...invertedIndexFiles,
         stopWords,
         linksFile,
     }
