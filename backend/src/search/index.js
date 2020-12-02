@@ -108,8 +108,9 @@ const getDocQueryRankingInfo = (queryTerms, queryWeights, docInfo) => {
 
 
 const getWeightedRank = (
-    weightTowardsSimilarity
-) => ({ similarity, pageRankScore }) =>
+    weightTowardsSimilarity,
+    { similarity, pageRankScore }
+) =>
     (
         (weightTowardsSimilarity * similarity) +
         (
@@ -165,6 +166,7 @@ export const getBestMatches = (
         ...documentCollection[id],
         id,
         rank: getWeightedRank(
+            0.7,
             getDocQueryRankingInfo(
                 queryTerms,
                 queryWeights,
