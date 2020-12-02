@@ -49,7 +49,7 @@ async def main():
             fetched_url = link.get('href')
             # some filters to get rid of non htmls
             if fetched_url is not None and fetched_url != '':
-                if fetched_url[0] not in ['#', '/'] and fetched_url[-3:] not in ['pdf', 'jpg', 'png'] and fetched_url not in traversed:
+                if fetched_url[0] not in ['#', '/'] and fetched_url[-3:] not in ['pdf', 'jpg', 'png'] and fetched_url not in traversed and "instagram.com" not in fetched_url and "facebook.com" not in fetched_url and "linkedin.com" not in fetched_url:
                     # if already no traversed appends to seeds and adds to traversed set
                     seeds.append(fetched_url)
                     print(fetched_url)
