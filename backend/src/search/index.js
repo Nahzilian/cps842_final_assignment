@@ -163,7 +163,9 @@ export const getBestMatches = (
     // IDs, information (including title, URL, and body),
     // and ranks
     const docsWithRanks = docIds.map(id => ({
-        ...documentCollection[id],
+        title: documentCollection[id].title,
+        preview: documentCollection[id].body,
+        url: documentCollection[id].org_url,
         id,
         rank: getWeightedRank(
             0.7,
